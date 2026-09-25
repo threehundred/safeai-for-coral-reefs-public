@@ -6,7 +6,7 @@
 [![DOI](https://img.shields.io/badge/DOI-10.1016%2Fj.ecoinf.2025.103207-blue)](https://doi.org/10.1016/j.ecoinf.2025.103207)
 [![License: CC BY 4.0](https://img.shields.io/badge/Paper%20License-CC%20BY%204.0-lightgrey)](https://creativecommons.org/licenses/by/4.0/)
 
-> 🌐 **[View the project landing page →](https://threehundred.github.io/safe-for-coral-reefs-public/)** (served via GitHub Pages)
+> 🌐 **[View the project landing page →](https://threehundred.github.io/safeai-for-coral-reefs-public/)** (served via GitHub Pages)
 
 **Mathew Wyatt**, Sharyn Hickey, Ben Radford, Manuel Gonzalez-Rivero, Nader Boutros, Nikolaus Callow, Nicole Ryan, Arjun Chennu, Mohammed Bennamoun, James Gilmour
 
