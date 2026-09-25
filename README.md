@@ -28,6 +28,9 @@ suite of **out-of-distribution (OOD) detection** algorithms to measure how well 
 that a model should *not* confidently classify, helping keep automated reef monitoring trustworthy
 at scale.
 
+![Dataset Locations](https://ars.els-cdn.com/content/image/1-s2.0-S157495412500216X-gr1.jpg),
+
+
 ## Key contributions
 
 | | |
