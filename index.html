@@ -372,8 +372,8 @@
     <h2>Detect OOD datasets for your own embeddings</h2>
     <p class="lead">
       Point the benchmark at your own feature embeddings to measure whether a new survey is
-      out-of-distribution relative to a reference dataset. High separability (AUROC&nbsp;→&nbsp;1.0)
-      means the model should <em>not</em> confidently classify that imagery.
+      out-of-distribution relative to a reference dataset. Low histogram intersection (HI&nbsp;→&nbsp;0.0)
+      means high separability, so the model should <em>not</em> confidently classify that imagery.
     </p>
     <div class="cite">
       <div class="cite-head">
@@ -383,7 +383,16 @@
 <pre>import numpy as np
 import torch
 from pytorch_ood.detector import ODIN, ViM, DICE, KNN
-from pytorch_ood.utils import OODMetrics
+
+def histogram_intersection(scores_in, scores_out, bins=50):
+    # Overlap between the in- and out-of-distribution score distributions.
+    # 1.0 = identical (fully in-distribution), 0.0 = perfectly separated (OOD).
+    lo = min(scores_in.min(), scores_out.min())
+    hi = max(scores_in.max(), scores_out.max())
+    h_in,  _ = np.histogram(scores_in,  bins=bins, range=(lo, hi), density=True)
+    h_out, _ = np.histogram(scores_out, bins=bins, range=(lo, hi), density=True)
+    width = (hi - lo) / bins
+    return np.minimum(h_in, h_out).sum() * width
 
 # 1. Load your own feature embeddings (N x D) + integer labels.
 #    Rows are image patches; columns are backbone features
@@ -405,17 +414,14 @@ detectors = {
 # 4. Score in-distribution vs. new data and measure separability.
 for name, det in detectors.items():
     det.fit(torch.tensor(in_X))
-    scores_in  = det.predict(torch.tensor(in_X))
-    scores_out = det.predict(torch.tensor(ood_X))
+    scores_in  = det.predict(torch.tensor(in_X)).numpy()
+    scores_out = det.predict(torch.tensor(ood_X)).numpy()
 
-    metrics = OODMetrics(metrics=["auroc", "fpr95tpr"])
-    metrics.update(scores_in,  torch.zeros(len(scores_in)))   # 0 = in-distribution
-    metrics.update(scores_out, torch.ones(len(scores_out)))   # 1 = OOD
-    result = metrics.compute()
-    print(f"{name:5s}  AUROC={result['auroc']:.3f}  FPR95={result['fpr95tpr']:.3f}")
+    hi = histogram_intersection(scores_in, scores_out)
+    print(f"{name:5s}  HI={hi:.3f}")
 
-# AUROC ~0.5  -> new data looks in-distribution (safe to classify)
-# AUROC ->1.0 -> new data is out-of-distribution (flag for review)</pre>
+# HI ->1.0 -> new data looks in-distribution (safe to classify)
+# HI ~0.0  -> new data is out-of-distribution (flag for review)</pre>
     </div>
   </div>
 </section>
